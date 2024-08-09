@@ -5,12 +5,14 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+# pyre-unsafe
+
 import unittest
 from contextlib import contextmanager
 
 # pyre-fixme[21]
 import fbgemm_gpu
-from fbgemm_gpu.config import FeatureGateName
+from fbgemm_gpu.config import FeatureGate, FeatureGateName
 
 # pyre-fixme[16]: Module `fbgemm_gpu` has no attribute `open_source`.
 open_source: bool = getattr(fbgemm_gpu, "open_source", False)
@@ -35,6 +37,11 @@ class FeatureGateTest(unittest.TestCase):
             # pyre-ignore[16]
             with self.assertNotRaised(Exception):
                 print(f"\n[OSS] Feature {feature.name} enabled: {feature.is_enabled()}")
+
+            with self.assertNotRaised(Exception):
+                print(
+                    f"\n[OSS] Feature {feature.name} enabled: {FeatureGate.is_enabled(feature)}"
+                )
 
     @unittest.skipIf(open_source, "Not supported in open source")
     def test_feature_gates_fb(self) -> None:
